@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}列表{% endblock %}
+
+{% block page_content %}
+<div class="list-group">
+
+{% for post in xqpoint %}
+<a class="list-group-item" href='/get/{{ post.CNTYPT_ }}'>{{ post.NAME }}</a>
+{% endfor %}
+</div>
+<nav aria-label="Page navigation" style="text-align: center">
+  <ul class="pagination center">
+    <li>
+      <a href="/get/page/{{page-1}}" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+
+    <li><a href="/get/page/1">1</a></li>
+    <li><a href="/get/page/2">2</a></li>
+    <li><a href="/get/page/3">3</a></li>
+    <li><a href="/get/page/4">4</a></li>
+    <li><a href="/get/page/5">5</a></li>
+    <li>
+      <a href="/get/page/{{page+1}}" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+{% endblock %}
+
