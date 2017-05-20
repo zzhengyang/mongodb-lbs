@@ -43,8 +43,8 @@ def shape2mongodb(shape_path, mongodb_server, mongodb_port, mongodb_db, mongodb_
                 feat_defn = lyr.GetLayerDefn()
                 for i in range(feat_defn.GetFieldCount()):
                         value = feat.GetField(i)
-                        if isinstance(value, str):
-                                value = unicode(value, 'gb2312')
+                        # if isinstance(value, str):
+                                # value = unicode(value, 'gb2312')
                         field = feat.GetFieldDefnRef(i)
                         fieldname = field.GetName()
                         mongofeat[fieldname] = value
@@ -89,45 +89,37 @@ def mongodb2shape(mongodb_server, mongodb_port, mongodb_db, mongodb_collection, 
         print '%s features loaded in shapefile from MongoDb.' % lyr.GetFeatureCount()
 
 # delete otuput shape if it exists
-input_shape = '/Users/Zyang/mongodb-geo/merchant-geo/hdu-map/res/XianCh_point.shp'
-# # input_shape = '/Users/Zyang/Downloads/allowtest/CHN_adm_shp/CHN_adm3.shp'
+# input_shape = '/Users/Zyang/mongodb-geo/merchant-geo/mongodb-lbs/res/XianCh_point.shp'
+input_shape = '/Users/Zyang/mongodb-geo/merchant-geo/mongodb-lbs/res/CHN_adm3.shp'
 # output_shape = '/Users/Zyang/vbot/output.shp'
 # driver = ogr.GetDriverByName('ESRI Shapefile')
 # if os.path.exists(output_shape):
 #         driver.DeleteDataSource(output_shape)
 # connection information
+# mongodb_server = '106.14.177.41'
 mongodb_server = 'localhost'
 mongodb_port = 27017
 mongodb_db = 'gisdb'
-mongodb_collection = 'xqpoint'
+mongodb_collection = 'xqline'
 # 1. first we import features from shapefile to mongodb
 print 'Importing data to mongodb...'
+
+shape2mongodb(input_shape, mongodb_server, mongodb_port, mongodb_db, mongodb_collection, False, '')
+# 2. then we export features from mongodb to shapefile
+print 'Exporting data from mongodb...'
+# mongodb2shape(mongodb_server, mongodb_port, mongodb_db, mongodb_collection, output_shape, {"STATE": "40"})
+# 3. now some test with mongodb
 connection = MongoClient(mongodb_server, mongodb_port)
+print 'Getting database MongoDB %s' % mongodb_db
 db = connection[mongodb_db]
+print 'Getting the collection %s' % mongodb_collection
 collection = db[mongodb_collection]
-list = []
-for i in  collection.find():
-        dic = {}
-        dic['name'] = i['NAME']
-        dic['coordinates'] = i['geom']['coordinates']
-        list.append(dic)
-print list
-# shape2mongodb(input_shape, mongodb_server, mongodb_port, mongodb_db, mongodb_collection, False, '')
-# # 2. then we export features from mongodb to shapefile
-# print 'Exporting data from mongodb...'
-# # mongodb2shape(mongodb_server, mongodb_port, mongodb_db, mongodb_collection, output_shape, {"STATE": "40"})
-# # 3. now some test with mongodb
-# connection = MongoClient(mongodb_server, mongodb_port)
-# print 'Getting database MongoDB %s' % mongodb_db
-# db = connection[mongodb_db]
-# print 'Getting the collection %s' % mongodb_collection
-# collection = db[mongodb_collection]
-# # counting the collection
-# print 'Elements in collection: %s' % collection.count()
-# # finding one feature
-# feature = collection.find_one()
-# print 'Here is one random feature that has been stored:'
-# print feature
+# counting the collection
+print 'Elements in collection: %s' % collection.count()
+# finding one feature
+feature = collection.find_one()
+print 'Here is one random feature that has been stored:'
+print feature
 # some query now
-# print 'There are %s counties in STATE = 40' % collection.find({"STATE": "40"}).count()
-# print 'There are %s counties in STATE = 40 and AREA > 0.5' % collection.find({"STATE": "40", "AREA": {"$gt": 0.5}}).count()
+print 'There are %s counties in STATE = 40' % collection.find({"STATE": "40"}).count()
+print 'There are %s counties in STATE = 40 and AREA > 0.5' % collection.find({"STATE": "40", "AREA": {"$gt": 0.5}}).count()

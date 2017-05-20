@@ -5,16 +5,16 @@
 	<div id="container" style="height: 700px;">
 		<!-- 这里以后是地图 -->
 	</div>
-	<script src="static/dep/echarts.js"></script>
-	<script src="static/map/js/heilongjiang.js"></script>
-	<script src="static/map/js/china.js"></script>
+	<script src="../static/dep/echarts.js"></script>
+	<script src="../static/map/js/heilongjiang.js"></script>
+	<script src="../static/map/js/china.js"></script>
 	<script type="text/javascript">
 var dom = document.getElementById("container");
 var myChart = echarts.init(dom);
 var app = {};
 var option = null;
 
-//var data = '{{ data }}'
+
 var data = [
    {name: '漠河县', coordinates: [122.53233, 52.968872]},
 {name: '塔河县', coordinates: [124.7058, 52.340332]},
@@ -2157,6 +2157,17 @@ option = {
             emphasis: {
                 areaColor: '#2a333d'
             }
+        }
+    },
+	toolbox: {
+        show: true,
+        orient: 'vertical',
+        left: 'right',
+        top: 'center',
+        feature: {
+            dataView: {readOnly: false},
+            restore: {},
+            saveAsImage: {}
         }
     },
     series : [

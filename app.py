@@ -9,7 +9,7 @@ import bson.objectid
 import bson.errors
 from cStringIO import StringIO
 from PIL import Image
-from flask import render_template, request
+from flask import render_template, request, redirect
 from flask.ext.bootstrap import Bootstrap
 # import importDb
 
@@ -17,6 +17,7 @@ app = flask.Flask(__name__)
 bootstrap = Bootstrap(app)
 app.debug = True
 db = pymongo.MongoClient('localhost', 27017).gisdb
+# db = pymongo.MongoClient('106.14.177.41', 27017).gisdb
 allow_formats = ['jpeg', 'png', 'gif']
 
 def save_file(f):
@@ -63,21 +64,23 @@ def serve_file():
     except bson.errors.InvalidId:
         flask.abort(404)
 
-@app.route('/upload', methods=['POST'])
-def upload():
-    f = flask.request.files['uploaded_file']
-    sha1 = save_file(f)
-    # return 'ok'
-    return flask.redirect('/f/' + str(sha1))
+@app.route('/<int:city_id>/edit', methods=['GET','POST'])
+def edit(city_id):
+    if request.method == 'GET':
+        return render_template('edit.html', xqpoint=db.xqpoint.find({'CNTYPT_': city_id}))
+    else:
+        db.xqpoint.update({'CNTYPT_': city_id}, {'$set':{'NAME': request.form['name']}})
+        return redirect('/'+city_id+'/edit')
+@app.route('/<int:city_id>/delete')
+def delete(city_id):
+    db.xqpoint.remove({'CNTYPT_': city_id})
+    return redirect('/get/page/1')
 
 @app.route('/get/page/<int:page>', methods=['GET'])
 def get_all(page):
 
   return render_template('list.html', xqpoint=db.xqpoint.find().limit(15).skip((page-1)*15),page=page)
 
-@app.route('/get/<int:id>', methods=['GET'])
-def get_one_by_id(id):
-  return render_template('detail.html', xqpoint=db.xqpoint.find({'CNTYPT_': id}))
 
 @app.route('/search/exact', methods=['POST'])
 def get_one_by_coordinates():
@@ -115,13 +118,23 @@ def near():
 def within():
     return render_template('searchWithin.html')
 
-@app.route('/map', methods=['GET'])
-def get_map():
+@app.route('/map/point', methods=['GET'])
+def get_map_points():
     list = ''
-    a = db.xqpoint.find()
+    a = db.xqpoint.find({'geom':{'type':'Point'}})
     for i in a:
         list += "{name: '" + i['NAME'] + "', coordinates: " + str(i['geom']['coordinates']) + "},"
     return render_template('map.html', data1 = "["+list+"]")
+
+@app.route('/map/polygon', methods=['GET'])
+def get_map_polygon():
+    list = ''
+    a = db.xqpoint.find({'geom':{'type':'Polygen'}})
+    for i in a:
+        list += "{name: '" + i['NAME'] + "', coordinates: " + str(i['geom']['coordinates']) + "},"
+    return render_template('map_polygon.html', data1 = "["+list+"]")
+
+
 @app.route('/')
 def index():
     return render_template('index.html')

@@ -6,7 +6,15 @@
 <div class="list-group">
 
 {% for post in xqpoint %}
-<a class="list-group-item" href='/get/{{ post.CNTYPT_ }}'>{{ post.NAME }}</a>
+  <!--href="/get/{{ post.CNTYPT_ }}"-->
+<a class="list-group-item">{{ post.NAME }}
+    <span class="pull-right">
+      <button class="btn btn-xs btn-info" onclick="{location.href='{{ url_for('edit',city_id=post.CNTYPT_) }}'}">update</button>
+      <button class="btn btn-xs btn-warning" onclick="{location.href='{{ url_for('delete',city_id=post.CNTYPT_) }}'}">
+        <span class="glyphicon glyphicon-trash"></span>
+      </button>
+    </span>
+</a>
 {% endfor %}
 </div>
 <nav aria-label="Page navigation" style="text-align: center">
