@@ -1,28 +1,96 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset='utf-8' />
-    <title></title>
-    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.37.0/mapbox-gl.js'></script>
-    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.37.0/mapbox-gl.css' rel='stylesheet' />
-    <style>
-        body { margin:0; padding:0; }
-        #map { position:absolute; top:0; bottom:0; width:100%; }
-    </style>
-</head>
-<body>
+{% extends "header.html" %}
+{% block content %}
 
-<div id='map'></div>
-<script>
-mapboxgl.accessToken = '<your access token here>';
-var map = new mapboxgl.Map({
-    container: 'map', // container id
-    style: 'mapbox://styles/mapbox/streets-v9', //stylesheet location
-    center: [-74.50, 40], // starting position
-    zoom: 9 // starting zoom
-});
-</script>
 
-</body>
-</html>
+	<div id="container" style="height: 700px;">
+		<!-- 这里以后是地图 -->
+	</div>
+	<script src="../static/dep/echarts.js"></script>
+	<script src="../static/map/js/heilongjiang.js"></script>
+	<script src="../static/map/js/china.js"></script>
+	<script type="text/javascript">
+var dom = document.getElementById("container");
+var myChart = echarts.init(dom);
+var app = {};
+var option = null;
+
+option = {
+    backgroundColor: '#404a59',
+    title: {
+        text: '中国地图',
+        left: 'center',
+        textStyle: {
+            color: '#fff'
+        }
+    },
+    legend: {
+        orient: 'vertical',
+        y: 'bottom',
+        x:'right',
+        data:['city'],
+        textStyle: {
+            color: '#fff'
+        }
+    },
+    geo: {
+        map: 'china',
+        label: {
+            emphasis: {
+                show: false
+            }
+        },
+        roam: true,
+        itemStyle: {
+            normal: {
+                areaColor: '#323c48',
+                borderColor: '#111'
+            },
+            emphasis: {
+                areaColor: '#2a333d'
+            }
+        }
+    },
+	toolbox: {
+        show: true,
+        orient: 'vertical',
+        left: 'right',
+        top: 'center',
+        feature: {
+            dataView: {readOnly: false},
+            restore: {},
+            saveAsImage: {}
+        }
+    },
+    series: [
+                {
+                    type: 'map',
+                    mapType: name,
+                    label: {
+                        emphasis: {
+                            textStyle: {
+                                color: '#fff'
+                            }
+                        }
+                    },
+                    itemStyle: {
+                        normal: {
+                            borderColor: '#389BB7',
+                            areaColor: '#fff',
+                        },
+                        emphasis: {
+                            areaColor: '#389BB7',
+                            borderWidth: 0
+                        }
+                    },
+                    animation: false
+                    // animationDurationUpdate: 1000,
+                    // animationEasingUpdate: 'quinticInOut'
+                }
+            ]
+};
+if (option && typeof option === "object") {
+    myChart.setOption(option, true);
+}
+       </script>
+
+{% endblock %}
