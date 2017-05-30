@@ -10,8 +10,16 @@
     <input type="text" class="form-control" id='name' name='name' value="{{  post.NAME }}">
   </div>
   <div class="form-group">
-    <label for="longitude">经度</label>
-    <input type="text" class="form-control" id='longitude' name='longtitude' value="{{  post.geom.coordinates[0] }}">
+    <label for="pyname">英文</label>
+    <input type="text" class="form-control" id='pyname' name='pyname' value="{{  post.PYNAME }}">
+  </div>
+  <div class="form-group">
+    <label for="type">类型</label>
+    <input type="text" class="form-control" id='type' name='type' value="{{  post.geom.type }}">
+  </div>
+  <div class="form-group">
+    <label for="longtitude">经度</label>
+    <input type="text" class="form-control" id='longtitude' name='longtitude' value="{{  post.geom.coordinates[0] }}">
   </div>
   <div class="form-group">
     <label for="latitude">纬度</label>

@@ -22,12 +22,14 @@ db = pymongo.MongoClient('localhost', 27017).gisdb
 
 @app.route('/<int:city_id>/edit', methods=['GET','POST'])
 def edit(city_id):
+
     if request.method == 'GET':
         return render_template('edit.html', xqpoint=db.xqpoint.find({'CNTYPT_': city_id}))
     else:
-        db.xqpoint.update({'CNTYPT_': city_id}, {'$set':{'NAME': request.form['name']}})
+        db.xqpoint.update({'CNTYPT_': city_id}, {'$set':{'NAME': request.form['name'],
+                                                         'PYNAME': request.form['pyname']
+                                                         }})
         return redirect('/'+str(city_id)+'/edit')
-
 @app.route('/<int:city_id>/delete')
 def delete(city_id):
     db.xqpoint.remove({'CNTYPT_': city_id})
