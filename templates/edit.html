@@ -4,7 +4,7 @@
 
 {% block page_content %}
 {% for post in xqpoint %}
-<form role="form" action="{{  url_for('edit',city_id=3)  }} " method="post">
+<form role="form" action="{{  url_for('edit',city_id=city_id)  }} " method="post">
   <div class="form-group">
     <label for="name">名称</label>
     <input type="text" class="form-control" id='name' name='name' value="{{  post.NAME }}">

@@ -1,17 +1,9 @@
-import hashlib
-import datetime
 import re
-
 import flask
 import pymongo
-import bson.binary
-import bson.objectid
-import bson.errors
-from cStringIO import StringIO
-from PIL import Image
+
 from flask import render_template, request, redirect
 from flask.ext.bootstrap import Bootstrap
-# import importDb
 
 app = flask.Flask(__name__)
 bootstrap = Bootstrap(app)
@@ -21,10 +13,10 @@ db = pymongo.MongoClient('localhost', 27017).gisdb
 
 
 @app.route('/<int:city_id>/edit', methods=['GET','POST'])
-def edit(city_id):
+def edit(city_id=None):
 
     if request.method == 'GET':
-        return render_template('edit.html', xqpoint=db.xqpoint.find({'CNTYPT_': city_id}))
+        return render_template('edit.html', xqpoint=db.xqpoint.find({'CNTYPT_': city_id}), city_id=city_id)
     else:
         db.xqpoint.update({'CNTYPT_': city_id}, {'$set':{'NAME': request.form['name'],
                                                          'PYNAME': request.form['pyname']
