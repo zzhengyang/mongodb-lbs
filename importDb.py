@@ -21,6 +21,7 @@ def shape2mongodb(shape_path, mongodb_server, mongodb_port, mongodb_db, mongodb_
         print 'Starting to load %s of %s features in shapefile %s to MongoDB...' % (lyr.GetFeatureCount(), totfeats, lyr.GetName())
         print 'Opening MongoDB connection to server %s:%i...' % (mongodb_server, mongodb_port)
         connection = MongoClient(mongodb_server, mongodb_port)
+        # connection.admin.authenticate("exam", "g9vn5Bevn2EKtG",mechanism='SCRAM-SHA-1')
         print 'Getting database %s' % mongodb_db
         db = connection[mongodb_db]
         print 'Getting the collection %s' % mongodb_collection
@@ -43,8 +44,8 @@ def shape2mongodb(shape_path, mongodb_server, mongodb_port, mongodb_db, mongodb_
                 feat_defn = lyr.GetLayerDefn()
                 for i in range(feat_defn.GetFieldCount()):
                         value = feat.GetField(i)
-                        # if isinstance(value, str):
-                                # value = unicode(value, 'gb2312')
+                        if isinstance(value, str):
+                                value = unicode(value, 'gb2312')
                         field = feat.GetFieldDefnRef(i)
                         fieldname = field.GetName()
                         mongofeat[fieldname] = value
@@ -89,8 +90,8 @@ def mongodb2shape(mongodb_server, mongodb_port, mongodb_db, mongodb_collection, 
         print '%s features loaded in shapefile from MongoDb.' % lyr.GetFeatureCount()
 
 # delete otuput shape if it exists
-# input_shape = '/Users/Zyang/mongodb-geo/merchant-geo/mongodb-lbs/res/XianCh_point.shp'
-input_shape = '/Users/Zyang/mongodb-geo/merchant-geo/mongodb-lbs/res/CHN_adm3.shp'
+input_shape = '/Users/Zyang/mongodb-geo/merchant-geo/mongodb-lbs/res/XianCh_point.shp'
+# input_shape = '/Users/Zyang/mongodb-geo/merchant-geo/mongodb-lbs/res/CHN_adm3.shp'
 # output_shape = '/Users/Zyang/vbot/output.shp'
 # driver = ogr.GetDriverByName('ESRI Shapefile')
 # if os.path.exists(output_shape):
@@ -100,7 +101,7 @@ input_shape = '/Users/Zyang/mongodb-geo/merchant-geo/mongodb-lbs/res/CHN_adm3.sh
 mongodb_server = 'localhost'
 mongodb_port = 27017
 mongodb_db = 'gisdb'
-mongodb_collection = 'xqline'
+mongodb_collection = 'xqpoint'
 # 1. first we import features from shapefile to mongodb
 print 'Importing data to mongodb...'
 
@@ -110,6 +111,7 @@ print 'Exporting data from mongodb...'
 # mongodb2shape(mongodb_server, mongodb_port, mongodb_db, mongodb_collection, output_shape, {"STATE": "40"})
 # 3. now some test with mongodb
 connection = MongoClient(mongodb_server, mongodb_port)
+# connection.admin.authenticate("exam", "g9vn5Bevn2EKtG",mechanism='SCRAM-SHA-1')
 print 'Getting database MongoDB %s' % mongodb_db
 db = connection[mongodb_db]
 print 'Getting the collection %s' % mongodb_collection

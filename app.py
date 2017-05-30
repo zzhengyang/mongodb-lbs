@@ -18,51 +18,7 @@ bootstrap = Bootstrap(app)
 app.debug = True
 db = pymongo.MongoClient('localhost', 27017).gisdb
 # db = pymongo.MongoClient('106.14.177.41', 27017).gisdb
-allow_formats = ['jpeg', 'png', 'gif']
 
-def save_file(f):
-
-
-    content = StringIO(f.read())
-    try:
-        mime = Image.open(content).format.lower()
-        if mime not in allow_formats:
-            raise IOError()
-    except IOError:
-        flask.abort(400)
-
-    sha1 = hashlib.sha1(content.getvalue()).hexdigest()
-    c = dict(
-        content=bson.binary.Binary(content.getvalue()),
-        mime=mime,
-        time=datetime.datetime.utcnow(),
-        sha1=sha1,
-    )
-    try:
-        db.files.save(c)
-    except pymongo.errors.DuplicateKeyError:
-        pass
-    # return sha1
-
-@app.route('/f')
-def serve_file():
-    try:
-        f = db.xqpoint.find_one({'x': int(request.args.get('x')),'y': int(request.args.get('y')),'zoom': int(request.args.get('z'))})
-        if f is None:
-            raise bson.errors.InvalidId()
-        if flask.request.headers.get('If-Modified-Since') == f['time'].ctime():
-            return flask.Response(status=304)
-        resp = flask.Response(f['content'], mimetype='image/' + f['mime'])
-        resp.headers['Last-Modified'] = f['time'].ctime()
-        # return f['content']
-        return  '''
-    <!doctype html>
-    <html>
-    <body>
-    <h1></h1>
-    '''
-    except bson.errors.InvalidId:
-        flask.abort(404)
 
 @app.route('/<int:city_id>/edit', methods=['GET','POST'])
 def edit(city_id):
@@ -70,7 +26,8 @@ def edit(city_id):
         return render_template('edit.html', xqpoint=db.xqpoint.find({'CNTYPT_': city_id}))
     else:
         db.xqpoint.update({'CNTYPT_': city_id}, {'$set':{'NAME': request.form['name']}})
-        return redirect('/'+city_id+'/edit')
+        return redirect('/'+str(city_id)+'/edit')
+
 @app.route('/<int:city_id>/delete')
 def delete(city_id):
     db.xqpoint.remove({'CNTYPT_': city_id})
@@ -142,4 +99,4 @@ def index():
 
 
 if __name__ == '__main__':
-    app.run('0.0.0.0',80)
+    app.run(port=7777)

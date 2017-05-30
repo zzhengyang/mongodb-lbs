@@ -4,18 +4,18 @@
 
 {% block page_content %}
 {% for post in xqpoint %}
-<form role="form">
+<form role="form" action="{{  url_for('edit',city_id=3)  }} " method="post">
   <div class="form-group">
     <label for="name">名称</label>
-    <input type="text" class="form-control" id='name' value="{{  post.NAME }}">
+    <input type="text" class="form-control" id='name' name='name' value="{{  post.NAME }}">
   </div>
   <div class="form-group">
     <label for="longitude">经度</label>
-    <input type="text" class="form-control" id='longitude' value="{{  post.geom.coordinates[0] }}">
+    <input type="text" class="form-control" id='longitude' name='longtitude' value="{{  post.geom.coordinates[0] }}">
   </div>
   <div class="form-group">
     <label for="latitude">纬度</label>
-    <input type="text" class="form-control" id='latitude' value="{{  post.geom.coordinates[1] }}">
+    <input type="text" class="form-control" id='latitude' name='latitude' value="{{  post.geom.coordinates[1] }}">
   </div>
     <button type="submit" class="btn btn-success pull-right">提交</button>
 </form>
